@@ -74,42 +74,42 @@ const GanttChart = () => {
   // });
 
   const [chartData, setChartData] = useState({
-    labels: ["Task 1"], // Make sure to have labels for each dataset entry
+    labels: ["Task1"], // Make sure to have labels for each dataset entry
     datasets: [
       {
         label: "Weekly Scales",
         data: [
           {
             x: ["2023-11-04", "2023-11-06"],
-            y: "Task 1",
+            y: "Task1",
           },
           {
             x: ["2023-11-07", "2023-11-14"],
-            y: "Task 2",
+            y: "Task2",
           },
           {
             x: ["2023-11-10", "2023-11-21"],
-            y: "Task 3",
+            y: "Task3",
           },
           {
             x: ["2023-11-13", "2023-11-28"],
-            y: "Task 4",
+            y: "Task4",
           },
           {
             x: ["2023-11-16", "2023-11-30"],
-            y: "Task 5",
+            y: "Task5",
           },
           {
             x: ["2023-12-10", "2023-12-21"],
-            y: "Task 6",
+            y: "Task6",
           },
           {
             x: ["2023-12-13", "2023-12-28"],
-            y: "Task 7",
+            y: "Task7",
           },
           {
             x: ["2023-12-16", "2023-12-30"],
-            y: "Task 8",
+            y: "Task8",
           },
         ],
         backgroundColor: [
@@ -175,13 +175,82 @@ const GanttChart = () => {
 
     setChartData(newDataset);
   }
+
+  function deleteTask() {
+    const deleteTaskName = document.getElementById("deleteTaskName").value;
+
+    // 刪除任務數據
+    const filteredTasks = chartData.datasets[0].data.filter((task) => task.y !== deleteTaskName);
+
+    // 刪除對應的標籤
+    const filteredLabels = chartData.labels.filter((label) => label !== deleteTaskName);
+
+    const updatedDataset = {
+      ...chartData,
+      labels: filteredLabels, // 更新標籤
+      datasets: [
+        {
+          ...chartData.datasets[0],
+          data: filteredTasks,
+        },
+      ],
+    };
+
+    setChartData(updatedDataset);
+  }
+
+  function changeTaskName() {
+    const currentTaskName = document.getElementById("currentTaskName").value; // 當前任務名稱
+    const newTaskName = document.getElementById("newTaskName").value; // 新的任務名稱
+
+    // 更新任務數據
+    const updatedTasks = chartData.datasets[0].data.map((task) => {
+      if (task.y === currentTaskName) {
+        return { ...task, y: newTaskName };
+      }
+      return task;
+    });
+
+    // 更新圖表的標籤
+    const updatedLabels = chartData.labels.map((label) => {
+      if (label === currentTaskName) {
+        return newTaskName;
+      }
+      return label;
+    });
+
+    const updatedDataset = {
+      ...chartData,
+      labels: updatedLabels, // 使用更新後的標籤
+      datasets: [
+        {
+          ...chartData.datasets[0],
+          data: updatedTasks,
+        },
+      ],
+    };
+
+    setChartData(updatedDataset);
+  }
+
   return (
     <div>
       <Bar data={chartData} options={chartOptions} />
+      <h3>增加任務</h3>
       <input type="text" id="nameTask" />
       <input type="date" id="startDateTask" />
       <input type="date" id="endDateTask" />
       <button onClick={addTask}>Add Task</button>
+      <hr />
+      <h3>刪除任務</h3>
+      <input type="text" id="deleteTaskName" />
+      <button onClick={deleteTask}>Delete Task</button>
+      <hr />
+      <h3>修改任務名稱</h3>
+      <input type="text" id="currentTaskName" placeholder="Current Task Name" />
+      <input type="text" id="newTaskName" placeholder="New Task Name" />
+      <button onClick={changeTaskName}>Change Task Name</button>
+      <hr />
     </div>
   );
 };
